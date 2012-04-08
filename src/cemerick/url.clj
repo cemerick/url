@@ -49,7 +49,7 @@
            (when creds \@)
            host
            (port-str protocol port)
-           \/ path
+           path
            (when query (str \? (if (string? query)
                                  query
                                  (map->query query))))))))
@@ -65,13 +65,13 @@
               pass
               (.getHost url)
               (.getPort url)
-              (-> url .getPath (.replaceAll "^/" ""))
+              (.getPath url)
               (query->map (.getQuery url))))))
   ([base & path-segments]
-    (let [base (if (instance? URL base) base (url base))]
-      (assoc base
-        :path (->> (map url-encode path-segments)
-                (interpose \/)
-                (apply str (when (seq (:path base))
-                             (str (:path base) \/))))))))
+    (let [base (if (instance? URL base) base (url base))
+          path (->> (map url-encode path-segments)
+                 (cons (:path base))
+                 (interpose \/)
+                 (apply str))]
+      (assoc base :path (.replace path "//" "/")))))
 
