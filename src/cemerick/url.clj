@@ -1,34 +1,39 @@
 (ns cemerick.url
-  (:import java.net.URLEncoder)
+  (:import (java.net URLEncoder URLDecoder))
   (:require [pathetic.core :as pathetic])
-  (:use [clojure.core.incubator :only (-?> -?>>)]
-        [clojure.string :only (replace)])
-  (:refer-clojure :exclude (replace)))
+  (:use [clojure.core.incubator :only (-?> -?>>)]))
 
-(defn- url-encode
+(defn url-encode
   [string]
-  (-?> string str (URLEncoder/encode "UTF-8") (.replace "+" "%20")))
+  (when string
+    (-> string (URLEncoder/encode "UTF-8") (.replace "+" "%20"))))
+
+(defn url-decode
+  ([string] (url-decode string "UTF-8"))
+  ([string encoding]
+    (when string
+      (URLDecoder/decode string encoding))))
 
 (defn- map->query
   [m]
   (-?>> (seq m)
-        sort                     ; sorting makes testing a lot easier :-)
-        (map (fn [[k v]]
-               [(url-encode (name k))
-                "="
-                (url-encode (str v))]))
-        (interpose "&")
-        flatten
-        (apply str)))
+    sort                     ; sorting makes testing a lot easier :-)
+    (map (fn [[k v]]
+           [(url-encode (name k))
+            "="
+            (url-encode (str v))]))
+    (interpose "&")
+    flatten
+    (apply str)))
 
 (defn- query->map
   [qstr]
   (when qstr
     (-?>> (.split qstr "&")
       seq
-      (map #(.split % "="))
-      (map vec)
-      (into {}))))
+      (mapcat #(.split % "="))
+      (map url-decode)
+      (apply hash-map))))
 
 (defn- port-str
   [protocol port]
@@ -57,8 +62,22 @@
                                  query
                                  (map->query query))))))))
 
+(defn- normalize-path
+  [path]
+  (let [path (pathetic/normalize path)]
+    (if (= "/" path) nil path)))
+
 (defn url
-  "Returns a new URL record for the given url string(s)."
+  "Returns a new URL record for the given url string(s).
+
+   The first argument must be a base url — either a complete url string, or
+   a pre-existing URL record instance that will serve as the basis for the new
+   URL.  Any additional arguments must be strings, which are interpreted as
+   relative paths that are successively resolved against the base url's path
+   to construct the final :path in the returned URL record. 
+
+   This function does not perform any url-encoding.  Use `url-encode` to encode
+   URL path segments as desired before passing them into this fn."
   ([url]
     (if (instance? URL url)
       url
@@ -69,18 +88,11 @@
               (and (seq pass) pass)
               (.getHost url)
               (.getPort url)
-              (.getPath url)
+              (normalize-path (.getPath url))
               (query->map (.getQuery url))))))
   ([base-url & path-segments]
-    (let [base-url (if (instance? URL base-url) base-url (url base-url))
-          path (->> (mapcat #(.split ^String % "/") path-segments)
-                 (map url-encode)
-                 (cons (:path base-url))
-                 (interpose \/)
-                 (apply str))]
-      (assoc base-url :path (pathetic/normalize path)))))
+    (let [base-url (if (instance? URL base-url) base-url (url base-url))]
+      (assoc base-url :path (normalize-path (reduce pathetic/resolve
+                                                    (:path base-url)
+                                                    path-segments))))))
 
-(def ^{:doc "Same as `url`, but returns a string of the result.
-Useful for concisely navigating around a URL with relative paths,
-or to easily normalize a single url string."}
-      url-str (comp str url))
