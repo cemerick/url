@@ -16,8 +16,8 @@ nil
 "https://vtUQeOtUnYr7PGCLQ96Ul4zqpDUO4sOE:@api.stripe.com/v1/charges"
 ```
 
-`url` will also accept additional path segments to be appended to the
-path in the "root" URL:
+`url` will also accept additional paths to be resolved against the path
+in the base URL:
 
 ```clojure
 => (url "https://api.twitter.com/")
@@ -28,6 +28,23 @@ path in the "root" URL:
                   :host "api.twitter.com", :port -1, :path "1/users/profile_image/cemerick"}
 => (str *1)
 "https://api.twitter.com/1/users/profile_image/cemerick"
+=> (str (url "https://api.twitter.com/1/users/profile_image/cemerick" "../../lookup.json"))
+"https://api.twitter.com/1/users/lookup.json"
+```
+
+Note that `url` does not perform any url-encoding of paths.  Use
+`cemerick.url/url-encode` to url-encode any paths/path components prior
+to passing them to `url`.  e.g.:
+
+```clojure
+=> (def download-root "http://foo.com/dl")
+#'cemerick.test-url/download-root
+=> (str (url download-root "/"))
+"http://foo.com"
+=> (str (url download-root (url-encode "/")))
+"http://foo.com/dl/%2F"
+=> (str (url download-root (url-encode "/logical/file/path")))
+"http://foo.com/dl/%2Flogical%2Ffile%2Fpath"
 ```
 
 The `:query` slot can be a string or a map of params:
@@ -43,7 +60,7 @@ url is available in Clojars. Add this `:dependency` to your Leiningen
 `project.clj`:
 
 ```clojure
-[com.cemerick/url "0.0.2"]
+[com.cemerick/url "0.0.3"]
 ```
 
 Or, add this to your Maven project's `pom.xml`:
@@ -57,7 +74,7 @@ Or, add this to your Maven project's `pom.xml`:
 <dependency>
   <groupId>com.cemerick</groupId>
   <artifactId>url</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3</version>
 </dependency>
 ```
 
