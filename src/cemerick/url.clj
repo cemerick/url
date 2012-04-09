@@ -1,6 +1,9 @@
 (ns cemerick.url
   (:import java.net.URLEncoder)
-  (:use [clojure.core.incubator :only (-?> -?>>)]))
+  (:require [pathetic.core :as pathetic])
+  (:use [clojure.core.incubator :only (-?> -?>>)]
+        [clojure.string :only (replace)])
+  (:refer-clojure :exclude (replace)))
 
 (defn- url-encode
   [string]
@@ -55,23 +58,29 @@
                                  (map->query query))))))))
 
 (defn url
-  ([db]
-    (if (instance? URL db)
-      db
-      (let [url (java.net.URL. db)
-            [_ user pass] (re-matches #"([^:]+):(.*$)" (or (.getUserInfo url) ""))]
+  "Returns a new URL record for the given url string(s)."
+  ([url]
+    (if (instance? URL url)
+      url
+      (let [url (java.net.URL. url)
+            [user pass] (.split ^String (or (.getUserInfo url) "") ":" 2)]
         (URL. (.toLowerCase (.getProtocol url))
-              user
-              pass
+              (and (seq user) user)
+              (and (seq pass) pass)
               (.getHost url)
               (.getPort url)
               (.getPath url)
               (query->map (.getQuery url))))))
-  ([base & path-segments]
-    (let [base (if (instance? URL base) base (url base))
-          path (->> (map url-encode path-segments)
-                 (cons (:path base))
+  ([base-url & path-segments]
+    (let [base-url (if (instance? URL base-url) base-url (url base-url))
+          path (->> (mapcat #(.split ^String % "/") path-segments)
+                 (map url-encode)
+                 (cons (:path base-url))
                  (interpose \/)
                  (apply str))]
-      (assoc base :path (.replace path "//" "/")))))
+      (assoc base-url :path (pathetic/normalize path)))))
 
+(def ^{:doc "Same as `url`, but returns a string of the result.
+Useful for concisely navigating around a URL with relative paths,
+or to easily normalize a single url string."}
+      url-str (comp str url))
