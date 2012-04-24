@@ -3,7 +3,7 @@
   (:use cemerick.url
         clojure.test))
 
-(def url-str (comp str url))
+(def url-str (comp str #'url))
 
 (deftest test-map-to-query-str
   (are [x y] (= x (#'cemerick.url/map->query y))
@@ -51,3 +51,8 @@
   (is (= "http://a" (str (url "http://a/b/c" "/"))))
   (is (= "http://a" (str (url "http://a/b/c" "../.."))))
   (is (= "http://a/x" (str (url "http://a/b/c" "../.." "." "./x")))))
+
+(deftest anchors
+  (is (= "http://a#x" (url-str "http://a#x")))
+  (is (= "http://a?b=c#x" (url-str "http://a?b=c#x")))
+  (is (= "http://a?b=c#x" (-> "http://a#x" url (assoc :query {:b "c"}) str))))

@@ -48,7 +48,7 @@
     (str username ":" password)))
 
 (defrecord URL
-  [protocol username password host port path query]
+  [protocol username password host port path query anchor]
   Object
   (toString [this]
     (let [creds (url-creds username password)]
@@ -60,7 +60,8 @@
            path
            (when query (str \? (if (string? query)
                                  query
-                                 (map->query query))))))))
+                                 (map->query query))))
+           (when anchor (str \# anchor))))))
 
 (defn- normalize-path
   [path]
@@ -89,7 +90,8 @@
               (.getHost url)
               (.getPort url)
               (normalize-path (.getPath url))
-              (query->map (.getQuery url))))))
+              (query->map (.getQuery url))
+              (.getRef url)))))
   ([base-url & path-segments]
     (let [base-url (if (instance? URL base-url) base-url (url base-url))]
       (assoc base-url :path (normalize-path (reduce pathetic/resolve
