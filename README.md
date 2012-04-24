@@ -22,10 +22,12 @@ in the base URL:
 ```clojure
 => (url "https://api.twitter.com/")
 #cemerick.url.URL{:protocol "https", :username nil, :password nil,
-                  :host "api.twitter.com", :port -1, :path "", :query nil}
+                  :host "api.twitter.com", :port -1, :path nil, :query nil,
+                  :anchor nil}
 => (url "https://api.twitter.com/" "1" "users" "profile_image" "cemerick")
-#cemerick.url.URL{:protocol "https", :username nil, :password nil, :query nil,
-                  :host "api.twitter.com", :port -1, :path "1/users/profile_image/cemerick"}
+#cemerick.url.URL{:protocol "https", :username nil, :password nil,
+                  :host "api.twitter.com", :port -1,
+                  :path "/1/users/profile_image/cemerick", :query nil, :anchor nil}
 => (str *1)
 "https://api.twitter.com/1/users/profile_image/cemerick"
 => (str (url "https://api.twitter.com/1/users/profile_image/cemerick" "../../lookup.json"))
