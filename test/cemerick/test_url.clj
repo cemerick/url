@@ -56,3 +56,7 @@
   (is (= "http://a#x" (url-str "http://a#x")))
   (is (= "http://a?b=c#x" (url-str "http://a?b=c#x")))
   (is (= "http://a?b=c#x" (-> "http://a#x" url (assoc :query {:b "c"}) str))))
+
+(deftest no-bare-?
+  (is (= "http://a" (-> "http://a?b=c" url (update-in [:query] dissoc "b") str))))
+

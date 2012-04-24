@@ -58,9 +58,9 @@
            host
            (port-str protocol port)
            path
-           (when query (str \? (if (string? query)
-                                 query
-                                 (map->query query))))
+           (when (seq query) (str \? (if (string? query)
+                                       query
+                                       (map->query query))))
            (when anchor (str \# anchor))))))
 
 (defn- normalize-path
