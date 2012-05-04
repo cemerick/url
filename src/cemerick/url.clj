@@ -5,14 +5,12 @@
 
 (defn url-encode
   [string]
-  (when string
-    (-> string (URLEncoder/encode "UTF-8") (.replace "+" "%20"))))
+  (-?> string str (URLEncoder/encode "UTF-8") (.replace "+" "%20")))
 
 (defn url-decode
   ([string] (url-decode string "UTF-8"))
   ([string encoding]
-    (when string
-      (URLDecoder/decode string encoding))))
+    (-?> string str (URLDecoder/decode encoding))))
 
 (defn- map->query
   [m]
