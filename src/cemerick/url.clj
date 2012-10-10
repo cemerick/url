@@ -35,7 +35,8 @@
 
 (defn- port-str
   [protocol port]
-  (when (and (not= -1 port)
+  (when (and (not= nil port)
+             (not= -1 port)
              (not (and (== port 80) (= protocol "http")))
              (not (and (== port 443) (= protocol "https"))))
     (str ":" port)))

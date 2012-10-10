@@ -31,7 +31,8 @@
   (is (= "http://localhost:8080" (url-str "http://localhost:8080")))
   (is (= "https://localhost" (url-str "https://localhost")))
   (is (= "https://localhost" (url-str "https://localhost:443")))
-  (is (= "https://localhost:8443" (url-str "https://localhost:8443"))))
+  (is (= "https://localhost:8443" (url-str "https://localhost:8443")))
+  (is (= "http://localhost" (str (map->URL {:host "localhost" :protocol "http"})))))
 
 (deftest user-info-edgecases
   (are [user-info url-string] (= user-info ((juxt :username :password) (url url-string)))
