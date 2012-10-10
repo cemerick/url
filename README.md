@@ -9,7 +9,7 @@ url is available in Clojars. Add this `:dependency` to your Leiningen
 `project.clj`:
 
 ```clojure
-[com.cemerick/url "0.0.6"]
+[com.cemerick/url "0.0.7"]
 ```
 
 Or, add this to your Maven project's `pom.xml`:
@@ -23,7 +23,7 @@ Or, add this to your Maven project's `pom.xml`:
 <dependency>
   <groupId>com.cemerick</groupId>
   <artifactId>url</artifactId>
-  <version>0.0.6</version>
+  <version>0.0.7</version>
 </dependency>
 ```
 
