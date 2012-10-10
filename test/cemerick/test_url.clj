@@ -32,7 +32,9 @@
   (is (= "https://localhost" (url-str "https://localhost")))
   (is (= "https://localhost" (url-str "https://localhost:443")))
   (is (= "https://localhost:8443" (url-str "https://localhost:8443")))
-  (is (= "http://localhost" (str (map->URL {:host "localhost" :protocol "http"})))))
+  (when-let [map->URL (resolve 'map->URL)]
+    ; map record factory fn not available under Clojure 1.2.0
+    (is (= "http://localhost" (str (map->URL {:host "localhost" :protocol "http"}))))))
 
 (deftest user-info-edgecases
   (are [user-info url-string] (= user-info ((juxt :username :password) (url url-string)))
