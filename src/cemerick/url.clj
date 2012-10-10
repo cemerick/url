@@ -61,11 +61,6 @@
                                        (map->query query))))
            (when anchor (str \# anchor))))))
 
-(defn- normalize-path
-  [path]
-  (let [path (pathetic/normalize path)]
-    (if (= "/" path) nil path)))
-
 (defn url
   "Returns a new URL record for the given url string(s).
 
@@ -87,12 +82,12 @@
               (and (seq pass) pass)
               (.getHost url)
               (.getPort url)
-              (normalize-path (.getPath url))
+              (pathetic/normalize (.getPath url))
               (query->map (.getQuery url))
               (.getRef url)))))
   ([base-url & path-segments]
     (let [base-url (if (instance? URL base-url) base-url (url base-url))]
-      (assoc base-url :path (normalize-path (reduce pathetic/resolve
-                                                    (:path base-url)
-                                                    path-segments))))))
+      (assoc base-url :path (pathetic/normalize (reduce pathetic/resolve
+                                                        (:path base-url)
+                                                        path-segments))))))
 

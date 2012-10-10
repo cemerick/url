@@ -40,16 +40,16 @@
     ["a" "b:c"] "http://a:b:c@foo"))
 
 (deftest path-normalization
-  (is (= "http://a" (url-str "http://a/b/c/../..")))
+  (is (= "http://a/" (url-str "http://a/b/c/../..")))
   
   (is (= "http://a/b/c" (url-str "http://a/b/" "c")))
   (is (= "http://a/b/c" (url-str "http://a/b/.." "b" "c")))
   (is (= "http://a/b/c" (str (url "http://a/b/..////./" "b" "c" "../././.." "b" "c"))))
-  (is (= "http://a" (str (url "http://a/b/..////./" "b" "c" "../././.." "b" "c" "/"))))
+  (is (= "http://a/" (str (url "http://a/b/..////./" "b" "c" "../././.." "b" "c" "/"))))
   
   (is (= "http://a/x" (str (url "http://a/b/c" "/x"))))
-  (is (= "http://a" (str (url "http://a/b/c" "/"))))
-  (is (= "http://a" (str (url "http://a/b/c" "../.."))))
+  (is (= "http://a/" (str (url "http://a/b/c" "/"))))
+  (is (= "http://a/" (str (url "http://a/b/c" "../.."))))
   (is (= "http://a/x" (str (url "http://a/b/c" "../.." "." "./x")))))
 
 (deftest anchors
