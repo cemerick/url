@@ -24,12 +24,19 @@
     flatten
     (apply str)))
 
+(defn split-param [param]
+  (->
+   (.split param "=")
+   (concat (repeat ""))
+   (->>
+    (take 2))))
+
 (defn- query->map
   [qstr]
   (when qstr
     (-?>> (.split qstr "&")
       seq
-      (mapcat #(.split % "="))
+      (mapcat split-param)
       (map url-decode)
       (apply hash-map))))
 
