@@ -9,7 +9,8 @@
   (are [x y] (= x (#'cemerick.url/map->query y))
        "a=1&b=2&c=3" {:a 1 :b 2 :c 3}
        "a=1&b=2&c=3" {:a "1"  :b "2" :c "3"}
-       "a=1&b=2" {"a" "1" "b" "2"}))
+       "a=1&b=2" {"a" "1" "b" "2"}
+       "a=" {"a" ""}))
 
 (deftest url-roundtripping
   (let [aurl (url "https://username:password@some.host.com/database?query=string")]
@@ -35,6 +36,13 @@
   (when-let [map->URL (resolve 'map->URL)]
     ; map record factory fn not available under Clojure 1.2.0
     (is (= "http://localhost" (str (map->URL {:host "localhost" :protocol "http"}))))))
+
+(deftest query-params
+  (are [query map] (is (= map (#'cemerick.url/query->map query)))
+    "a=b" {"a" "b"}
+    "a=1&b=2&c=3" {"a" "1" "b" "2" "c" "3"}
+    "a=" {"a" ""}
+    "a" {"a" ""}))
 
 (deftest user-info-edgecases
   (are [user-info url-string] (= user-info ((juxt :username :password) (url url-string)))
