@@ -1,7 +1,7 @@
 # url [![Travis CI status](https://secure.travis-ci.org/cemerick/url.png)](http://travis-ci.org/#!/cemerick/url/builds)
 
-This is a library that makes working with URLs in Clojure a little more
-pleasant.
+This is a library that makes working with URLs in Clojure and ClojureScript a
+little more pleasant.
 
 ## "Installation"
 
@@ -27,7 +27,9 @@ Or, add this to your Maven project's `pom.xml`:
 </dependency>
 ```
 
-url is compatible with Clojure 1.2.0 - 1.5.0.
+Starting with version `0.1.0`, url requires Clojure >= 1.5.0.  It provides the
+same API under ClojureScript (tested with ClojureScript `0.0-1835`, and should
+work well with any later revision).
 
 ## Usage
 
@@ -36,7 +38,7 @@ The `cemerick.url/url` function returns an instance of the
 datum within the provided URL:
 
 ```clojure
-=> (use '[cemerick.url :only (url url-encode)])
+=> (require '[cemerick.url :refer (url url-encode)])
 nil
 => (-> (url "https://api.stripe.com/v1/charges")
      (assoc :username "vtUQeOtUnYr7PGCLQ96Ul4zqpDUO4sOE")
@@ -50,7 +52,7 @@ in the base URL:
 ```clojure
 => (url "https://api.twitter.com/")
 #cemerick.url.URL{:protocol "https", :username nil, :password nil,
-                  :host "api.twitter.com", :port -1, :path nil, :query nil,
+                  :host "api.twitter.com", :port -1, :path "/", :query nil,
                   :anchor nil}
 => (url "https://api.twitter.com/" "1" "users" "profile_image" "cemerick")
 #cemerick.url.URL{:protocol "https", :username nil, :password nil,
