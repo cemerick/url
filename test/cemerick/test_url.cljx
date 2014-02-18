@@ -44,6 +44,7 @@
     "a=1&b=2&c=3" {"a" "1" "b" "2" "c" "3"}
     "a=" {"a" ""}
     "a" {"a" ""}
+    nil nil
     "" nil))
 
 (deftest user-info-edgecases
