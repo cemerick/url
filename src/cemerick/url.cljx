@@ -47,7 +47,7 @@
 
 (defn query->map
   [qstr]
-  (when qstr
+  (when (not (string/blank? qstr))
     (some->> (string/split qstr #"&")
       seq
       (mapcat split-param)
