@@ -1,4 +1,4 @@
-(defproject com.cemerick/url "0.1.1"
+(defproject com.cemerick/url "0.1.2-SNAPSHOT"
   :description "Makes working with URLs in Clojure a little more pleasant."
   :url "http://github.com/cemerick/url"
   :license {:name "Eclipse Public License"
