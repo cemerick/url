@@ -43,7 +43,9 @@
     "a=b" {"a" "b"}
     "a=1&b=2&c=3" {"a" "1" "b" "2" "c" "3"}
     "a=" {"a" ""}
-    "a" {"a" ""}))
+    "a" {"a" ""}
+    nil nil
+    "" nil))
 
 (deftest user-info-edgecases
   (are [user-info url-string] (= user-info ((juxt :username :password) (url url-string)))
